@@ -148,7 +148,7 @@
             <button id="volumeDownButton">音量降低</button>
         </div>
     </div>
-    <audio id="music" src="超级英雄.mp3" preload="auto"></audio>
+    <audio id="music" src="超级英雄.MP3" preload="auto"></audio>
     <script>
         const playButton = document.getElementById('playButton');
         const pauseButton = document.getElementById('pauseButton');
@@ -176,19 +176,19 @@
 
         const backgroundImages = [
             '邓超.jpg',
-            '陈赫.jpg'
-            '阻拦.jpg'
-            '黑牛.jpg'
-            '猎豹.jpg'
+            '陈赫.jpg',
+            '阻拦.jpg',
+            '黑牛.jpg',
+            '猎豹.jpg',
             'baby.jpg'
         ];
         let currentImageIndex = 0;
         const bodyElement = document.body;
 
         function changeBackgroundImage() {
-            bodyElement.style.backgroundImage = `url('family.jpg')`;
-            currentImageIndex = (currentImageIndex + 1) % backgroundImages.length;
-        }
+    bodyElement.style.backgroundImage = `url('${backgroundImages[currentImageIndex]}')`;
+    currentImageIndex = (currentImageIndex + 1) % backgroundImages.length;
+}
 
         setInterval(changeBackgroundImage, 2000);
 
