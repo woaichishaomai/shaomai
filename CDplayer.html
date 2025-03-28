@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CD 播放器</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-size: cover;
+            background-position: center;
+        }
+
+       .outer-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .cd-player {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle at center, #000 10%, #333 30%, #111 70%);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            animation: spin 20s linear infinite paused;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-image: url('your-cover-image.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .cd-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #fff;
+        }
+
+       .lyrics {
+            width: 300px;
+            height: 200px;
+            overflow: hidden;
+            color: black;
+            text-align: center;
+            margin-bottom: 10px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 10px;
+        }
+
+       .lyrics p {
+            position: relative;
+            top: 0;
+            margin: 0;
+            animation: scroll 15s linear infinite paused;
+        }
+
+       .controls {
+            margin-top: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 0 5px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(360deg);
+            }
+            to {
+                transform: rotate(0deg);
+            }
+        }
+
+        @keyframes scroll {
+            0% {
+                top: 0;
+            }
+            100% {
+                top: -100%;
+            }
+        }
+
+       .cd-text {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="outer-container">
+        <div class="lyrics">
+            <p>
+                gogogo出发喽~<br>
+                黑咖啡品味有多浓<br>
+                我只要汽水的轻松<br>
+                大热天做个白日梦<br>
+                梦见我变成了彩虹<br>
+                我有想奔跑的冲动<br>
+                有你在跌倒也从容<br>
+                无所畏惧的去追梦<br>
+                汗水书写这份光荣<br>
+                电影中角色也会有不同<br>
+                每一个小人物也拥有小的梦<br>
+                大屏幕映不出现实中的暗涌<br>
+                我只想和你牵着手在雨中等彩虹<br>
+                你说我是你的超级英雄<br>
+                偶尔也客串你的出气简<br>
+                心甘情愿接受这份光荣<br>
+                做你身边的萤火虫<br>
+                哦啊哦~<br>
+                如果我是你的超级英雄<br>
+                此刻为你高唱这首Love song<br>
+                小小的默契让爱转动<br>
+                做你最骄傲的英雄
+            </p>
+        </div>
+        <div class="cd-player">
+            <div class="cd-center"></div>
+        </div>
+        <div class="controls">
+            <button id="playButton">播放</button>
+            <button id="pauseButton" disabled>暂停</button>
+            <button id="volumeUpButton">音量增加</button>
+            <button id="volumeDownButton">音量降低</button>
+        </div>
+    </div>
+    <audio id="music" src="超级英雄.mp3" preload="auto"></audio>
+    <script>
+        const playButton = document.getElementById('playButton');
+        const pauseButton = document.getElementById('pauseButton');
+        const cdPlayer = document.querySelector('.cd-player');
+        const lyrics = document.querySelector('.lyrics p');
+        const music = document.getElementById('music');
+        const volumeUpButton = document.getElementById('volumeUpButton');
+        const volumeDownButton = document.getElementById('volumeDownButton');
+
+        playButton.addEventListener('click', () => {
+            cdPlayer.style.animationPlayState = 'running';
+            lyrics.style.animationPlayState = 'running';
+            music.play();
+            playButton.disabled = true;
+            pauseButton.disabled = false;
+        });
+
+        pauseButton.addEventListener('click', () => {
+            cdPlayer.style.animationPlayState = 'paused';
+            lyrics.style.animationPlayState = 'paused';
+            music.pause();
+            playButton.disabled = false;
+            pauseButton.disabled = true;
+        });
+
+        const backgroundImages = [
+            '邓超.jpg',
+            '陈赫.jpg'
+            '阻拦.jpg'
+            '黑牛.jpg'
+            '猎豹.jpg'
+            'baby.jpg'
+        ];
+        let currentImageIndex = 0;
+        const bodyElement = document.body;
+
+        function changeBackgroundImage() {
+            bodyElement.style.backgroundImage = `url('family.jpg')`;
+            currentImageIndex = (currentImageIndex + 1) % backgroundImages.length;
+        }
+
+        setInterval(changeBackgroundImage, 2000);
+
+        volumeUpButton.addEventListener('click', () => {
+            if (music.volume < 1) {
+                music.volume = Math.min(music.volume + 0.1, 1);
+            }
+        });
+
+        volumeDownButton.addEventListener('click', () => {
+            if (music.volume > 0) {
+                music.volume = Math.max(music.volume - 0.1, 0);
+            }
+        });
+    </script>
+</body>
+
+</html>    
