@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>两只老虎 R&B 版</title>
+    <script src="https://cdn.jsdelivr.net/npm/@midi-player/core@1.0.0/lib/midi-player.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@midi-visualizer/core@1.0.0/lib/midi-visualizer.min.js"></script>
+    <style>
+        body {
+            background: #1a1a1a;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: Arial, sans-serif;
+        }
+        #visualizer {
+            width: 80%;
+            height: 150px;
+            background: linear-gradient(45deg, #2c3e50, #3498db);
+            margin: 20px;
+            border-radius: 10px;
+        }
+        .lyrics {
+            font-size: 1.2em;
+            margin: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎵 两只老虎 R&B 版</h1>
+    <div id="visualizer"></div>
+    <div class="lyrics" id="lyrics">
+        🎶 两只老虎，两只老虎，跑得快～ 🐯
+    </div>
+    
+    <script>
+        // 初始化播放器
+        const player = new MidiPlayer.Player(function(event) {
+            // 歌词同步更新
+            const lyricMap = {
+                480: "🐯 两只老虎，两只老虎",
+                960: "🏃♂️ 跑得快，跑得快～",
+                1440: "👂 一只没有耳朵",
+                1920: "👀 一只没有尾巴",
+                2400: "🤔 真奇怪！真奇怪！"
+            };
+            if (lyricMap[event.tick]) {
+                document.getElementById('lyrics').innerHTML = lyricMap[event.tick];
+            }
+        });
+
+        // 加载MIDI文件
+        fetch('two_tigers_rb.mid')
+            .then(response => response.arrayBuffer())
+            .then(midiData => {
+                player.loadArrayBuffer(midiData);
+                player.play();
+                
+                // 初始化可视化
+                const visualizer = new MidiVisualizer("#visualizer");
+                visualizer.connect(player);
+            });
+
+        // 自动播放处理
+        document.addEventListener('click', function() {
+            AudioContext = AudioContext || webkitAudioContext;
+            const context = new AudioContext();
+            context.resume().then(() => {
+                console.log('Playback started');
+            });
+        }, { once: true });
+    </script>
+</body>
+</html>
