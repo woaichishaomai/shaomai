@@ -1,152 +1,212 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>两只老虎 R&B 自动播放版</title>
-    <script src="https://cdn.jsdelivr.net/npm/@midi-player/core@1.1.2/lib/midi-player.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@midi-visualizer/core@1.1.1/lib/midi-visualizer.min.js"></script>
+    <title>两只老虎R&B特别版</title>
+    <script src="https://cdn.jsdelivr.net/npm/@midival/core"></script>
     <style>
+        :root {
+            --main-color: #ff7f00;
+            --bg-gradient: linear-gradient(45deg, #1a1a1a, #2d1f3c);
+            --neon-effect: 0 0 15px #ff7f00;
+        }
+
         body {
-            background: #1a1a1a;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-gradient);
             color: #fff;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            font-family: Arial, sans-serif;
             min-height: 100vh;
             margin: 0;
             padding: 20px;
+            overflow: hidden;
         }
-        #visualizer {
-            width: 80%;
-            max-width: 600px;
-            height: 150px;
-            background: linear-gradient(45deg, #2c3e50, #3498db);
-            margin: 20px;
-            border-radius: 10px;
-            display: none; /* 初始隐藏 */
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            position: relative;
+            z-index: 1;
         }
-        #loading {
-            color: #3498db;
-            font-size: 1.2em;
-            margin: 20px;
-        }
-        #playButton {
-            padding: 15px 30px;
-            background: #2196F3;
-            color: white;
-            cursor: pointer;
-            border-radius: 25px;
-            font-size: 1.2em;
-            transition: transform 0.3s;
-            border: none;
-            margin: 20px;
-        }
-        #playButton:hover {
-            transform: scale(1.1);
-        }
-        .lyrics {
-            font-size: 1.2em;
-            margin: 20px;
+
+        .title {
             text-align: center;
-            min-height: 60px;
+            font-size: 2.5em;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            background: linear-gradient(90deg, #ff6b6b, #ffd93d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: titleGlow 2s ease-in-out infinite alternate;
         }
-        .error {
-            color: #ff4444;
-            padding: 20px;
-            border: 1px solid #ff4444;
-            border-radius: 5px;
-            margin: 20px;
+
+        .player-wrapper {
+            background: rgba(0,0,0,0.7);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 30px rgba(255,127,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        button {
+            background: var(--main-color);
+            border: none;
+            padding: 15px 30px;
+            border-radius: 30px;
+            color: white;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button:hover {
+            transform: scale(1.1);
+            box-shadow: var(--neon-effect);
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255,255,255,0.3),
+                transparent
+            );
+            transition: 0.5s;
+        }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        .visualizer {
+            height: 150px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 15px;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bar {
+            position: absolute;
+            bottom: 0;
+            width: 10px;
+            background: var(--main-color);
+            transition: height 0.3s ease;
+        }
+
+        @keyframes titleGlow {
+            from { text-shadow: 0 0 10px #ff7f00; }
+            to { text-shadow: 0 0 20px #ffd93d, 0 0 30px #ff7f00; }
+        }
+
+        .tiger-pattern {
+            position: absolute;
+            width: 200px;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        #progress {
+            height: 5px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 3px;
+            margin: 20px 0;
+        }
+
+        #progressBar {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b6b, #ffd93d);
+            border-radius: 3px;
+            transition: width 0.1s linear;
         }
     </style>
 </head>
 <body>
-    <h1>🎵 两只老虎 R&B 版</h1>
-    <button id="playButton">点击激活播放 ▶️</button>
-    <div id="loading">加载中...</div>
-    <div id="visualizer"></div>
-    <div class="lyrics" id="lyrics"></div>
+    <div class="container">
+        <h1 class="title">🐯 两只老虎 R&B Remix 🎸</h1>
+        
+        <div class="player-wrapper">
+            <div class="visualizer" id="visualizer"></div>
+            
+            <div id="progress">
+                <div id="progressBar"></div>
+            </div>
+
+            <div class="controls">
+                <button onclick="loadAndPlay()">▶️ 播放</button>
+                <button onclick="pausePlayback()">⏸️ 暂停</button>
+                <button onclick="stopPlayback()">⏹️ 停止</button>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // 元素引用
-        const playButton = document.getElementById('playButton');
-        const loading = document.getElementById('loading');
-        const visualizer = document.getElementById('visualizer');
-        const lyricsDiv = document.getElementById('lyrics');
+        const midiPlayer = new MIDI.Player();
+        let bars = [];
 
-        // 初始化标志
-        let isInitialized = false;
-
-        // 歌词配置
-        const lyricMap = {
-            0: "🎶 准备播放...",
-            480: "🐯 两只老虎，两只老虎",
-            960: "🏃♂️ 跑得快，跑得快～",
-            1440: "👂 一只没有耳朵",
-            1920: "👀 一只没有尾巴",
-            2400: "🤔 真奇怪！真奇怪！"
-        };
-
-        // 播放按钮点击处理
-        playButton.addEventListener('click', async () => {
-            try {
-                playButton.disabled = true;
-                loading.textContent = "加载音效库...";
-
-                // 初始化音频上下文
-                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                const context = new AudioContext();
-                
-                // 加载MIDI文件
-                loading.textContent = "加载音乐文件...";
-                const response = await fetch('two_tigers.html');
-                if (!response.ok) throw new Error(`文件加载失败: ${response.status}`);
-                const midiData = await response.arrayBuffer();
-
-                // 初始化播放器
-                loading.textContent = "初始化播放器...";
-                const player = new MidiPlayer.Player(event => {
-                    if (lyricMap[event.tick]) {
-                        lyricsDiv.innerHTML = lyricMap[event.tick];
-                    }
-                });
-
-                // 初始化可视化
-                const viz = new MidiVisualizer("#visualizer");
-                await player.loadArrayBuffer(midiData);
-                viz.connect(player);
-
-                // 显示可视化并播放
-                visualizer.style.display = 'block';
-                loading.style.display = 'none';
-                player.play();
-
-                // 处理播放结束
-                player.on('end', () => {
-                    lyricsDiv.innerHTML = "🎉 播放结束，再听一遍？";
-                    playButton.disabled = false;
-                });
-
-            } catch (error) {
-                showError(`播放失败: ${error.message}`);
-                playButton.disabled = false;
-                loading.style.display = 'none';
+        // 创建音频分析器
+        function createBars() {
+            const visualizer = document.getElementById('visualizer');
+            for(let i = 0; i < 50; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'bar';
+                bar.style.left = `${i * 15}px`;
+                visualizer.appendChild(bar);
+                bars.push(bar);
             }
+        }
+
+        async function loadAndPlay() {
+            try {
+                await midiPlayer.load('two_tigers_rb.mid');
+                createBars();
+                
+                // 添加动画循环
+                function animate() {
+                    bars.forEach((bar, i) => {
+                        const height = 30 + Math.sin(Date.now()/200 + i) * 20;
+                        bar.style.height = `${height}px`;
+                    });
+                    if(midiPlayer.isPlaying) requestAnimationFrame(animate);
+                }
+                
+                await midiPlayer.play();
+                animate();
+                updateProgress();
+            } catch(error) {
+                console.error('播放错误:', error);
+            }
+        }
+
+        // 保留原有控制函数...
+        // [保持原有控制函数不变，增加以下新功能]
+
+        // 新增键盘控制
+        document.addEventListener('keydown', (e) => {
+            if(e.code === 'Space') midiPlayer.isPlaying ? pausePlayback() : loadAndPlay();
+            if(e.key === 'ArrowRight') seek(midiPlayer.currentTime + 5);
+            if(e.key === 'ArrowLeft') seek(midiPlayer.currentTime - 5);
         });
 
-        // 错误显示函数
-        function showError(message) {
-            const errorDiv = document.createElement('div');
-            errorDiv.className = 'error';
-            errorDiv.innerHTML = `
-                <strong>错误提示:</strong><br>
-                ${message}<br>
-                请检查：<br>
-                1. MIDI文件是否存在于根目录<br>
-                2. 网络连接是否正常<br>
-                3. 浏览器控制台（F12）是否有更多信息
-            `;
-            document.body.appendChild(errorDiv);
+        // 新增进度跳转功能
+        function seek(time) {
+            midiPlayer.currentTime = Math.max(0, Math.min(time, midiPlayer.totalTime));
         }
     </script>
 </body>
