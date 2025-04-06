@@ -99,7 +99,7 @@
                 
                 // 加载MIDI文件
                 loading.textContent = "加载音乐文件...";
-                const response = await fetch('超级英雄.MP3');
+                const response = await fetch('two_tigers.html');
                 if (!response.ok) throw new Error(`文件加载失败: ${response.status}`);
                 const midiData = await response.arrayBuffer();
 
