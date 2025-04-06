@@ -2,9 +2,9 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>两只老虎 R&B 版</title>
-    <script src="https://cdn.jsdelivr.net/npm/@midi-player/core@1.0.0/lib/midi-player.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@midi-visualizer/core@1.0.0/lib/midi-visualizer.min.js"></script>
+    <title>两只老虎 R&B 自动播放版</title>
+    <script src="https://cdn.jsdelivr.net/npm/@midi-player/core@1.1.2/lib/midi-player.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@midi-visualizer/core@1.1.1/lib/midi-visualizer.min.js"></script>
     <style>
         body {
             background: #1a1a1a;
@@ -13,64 +13,141 @@
             flex-direction: column;
             align-items: center;
             font-family: Arial, sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
         }
         #visualizer {
             width: 80%;
+            max-width: 600px;
             height: 150px;
             background: linear-gradient(45deg, #2c3e50, #3498db);
             margin: 20px;
             border-radius: 10px;
+            display: none; /* 初始隐藏 */
+        }
+        #loading {
+            color: #3498db;
+            font-size: 1.2em;
+            margin: 20px;
+        }
+        #playButton {
+            padding: 15px 30px;
+            background: #2196F3;
+            color: white;
+            cursor: pointer;
+            border-radius: 25px;
+            font-size: 1.2em;
+            transition: transform 0.3s;
+            border: none;
+            margin: 20px;
+        }
+        #playButton:hover {
+            transform: scale(1.1);
         }
         .lyrics {
             font-size: 1.2em;
             margin: 20px;
             text-align: center;
+            min-height: 60px;
+        }
+        .error {
+            color: #ff4444;
+            padding: 20px;
+            border: 1px solid #ff4444;
+            border-radius: 5px;
+            margin: 20px;
         }
     </style>
 </head>
 <body>
     <h1>🎵 两只老虎 R&B 版</h1>
+    <button id="playButton">点击激活播放 ▶️</button>
+    <div id="loading">加载中...</div>
     <div id="visualizer"></div>
-    <div class="lyrics" id="lyrics">
-        🎶 两只老虎，两只老虎，跑得快～ 🐯
-    </div>
-    
+    <div class="lyrics" id="lyrics"></div>
+
     <script>
-        // 初始化播放器
-        const player = new MidiPlayer.Player(function(event) {
-            // 歌词同步更新
-            const lyricMap = {
-                480: "🐯 两只老虎，两只老虎",
-                960: "🏃♂️ 跑得快，跑得快～",
-                1440: "👂 一只没有耳朵",
-                1920: "👀 一只没有尾巴",
-                2400: "🤔 真奇怪！真奇怪！"
-            };
-            if (lyricMap[event.tick]) {
-                document.getElementById('lyrics').innerHTML = lyricMap[event.tick];
+        // 元素引用
+        const playButton = document.getElementById('playButton');
+        const loading = document.getElementById('loading');
+        const visualizer = document.getElementById('visualizer');
+        const lyricsDiv = document.getElementById('lyrics');
+
+        // 初始化标志
+        let isInitialized = false;
+
+        // 歌词配置
+        const lyricMap = {
+            0: "🎶 准备播放...",
+            480: "🐯 两只老虎，两只老虎",
+            960: "🏃♂️ 跑得快，跑得快～",
+            1440: "👂 一只没有耳朵",
+            1920: "👀 一只没有尾巴",
+            2400: "🤔 真奇怪！真奇怪！"
+        };
+
+        // 播放按钮点击处理
+        playButton.addEventListener('click', async () => {
+            try {
+                playButton.disabled = true;
+                loading.textContent = "加载音效库...";
+
+                // 初始化音频上下文
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                const context = new AudioContext();
+                
+                // 加载MIDI文件
+                loading.textContent = "加载音乐文件...";
+                const response = await fetch('two_tigers_rb.mid');
+                if (!response.ok) throw new Error(`文件加载失败: ${response.status}`);
+                const midiData = await response.arrayBuffer();
+
+                // 初始化播放器
+                loading.textContent = "初始化播放器...";
+                const player = new MidiPlayer.Player(event => {
+                    if (lyricMap[event.tick]) {
+                        lyricsDiv.innerHTML = lyricMap[event.tick];
+                    }
+                });
+
+                // 初始化可视化
+                const viz = new MidiVisualizer("#visualizer");
+                await player.loadArrayBuffer(midiData);
+                viz.connect(player);
+
+                // 显示可视化并播放
+                visualizer.style.display = 'block';
+                loading.style.display = 'none';
+                player.play();
+
+                // 处理播放结束
+                player.on('end', () => {
+                    lyricsDiv.innerHTML = "🎉 播放结束，再听一遍？";
+                    playButton.disabled = false;
+                });
+
+            } catch (error) {
+                showError(`播放失败: ${error.message}`);
+                playButton.disabled = false;
+                loading.style.display = 'none';
             }
         });
 
-        // 加载MIDI文件
-        fetch('two_tigers_rb.mid')
-            .then(response => response.arrayBuffer())
-            .then(midiData => {
-                player.loadArrayBuffer(midiData);
-                player.play();
-                
-                // 初始化可视化
-                const visualizer = new MidiVisualizer("#visualizer");
-                visualizer.connect(player);
-            });
-
-        // 自动播放处理
-        document.addEventListener('click', function() {
-            AudioContext = AudioContext || webkitAudioContext;
-            const context = new AudioContext();
-            context.resume().then(() => {
-                console.log('Playback started');
-            });
-        }, { once: true });
+        // 错误显示函数
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error';
+            errorDiv.innerHTML = `
+                <strong>错误提示:</strong><br>
+                ${message}<br>
+                请检查：<br>
+                1. MIDI文件是否存在于根目录<br>
+                2. 网络连接是否正常<br>
+                3. 浏览器控制台（F12）是否有更多信息
+            `;
+            document.body.appendChild(errorDiv);
+        }
     </script>
 </body>
 </html>
