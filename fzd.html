@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>樊振东加盟德甲联赛 - 微博舆论分析</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>樊振东加盟德甲联赛 - 微博舆论分析</h1>
+            <p class="subtitle">基于微博数据的舆情分析报告</p>
+        </header>
+
+        <section class="weibo-posts">
+            <h2>热门微博</h2>
+            <div class="original-post">
+                <h3>原始博文</h3>
+                <div class="post-content">
+                    <p class="post-text">Welcome to Saarbrücken @樊振东 🔵⚫️</p>
+                    <div class="post-images">
+                        <img src="封面图1.jpg" alt="封面图1" class="post-image">
+                        <img src="封面图2.jpg" alt="封面图2" class="post-image">
+                        <img src="封面图3.jpg" alt="封面图3" class="post-image">
+                    </div>
+                    <a href="https://weibo.com/7805990294/Pus8j7m1k?refer_flag=1001030103_" class="post-link" target="_blank">查看原始微博</a>
+                </div>
+            </div>
+            <div class="posts-container">
+                <!-- 这里将通过JavaScript动态加载微博内容 -->
+            </div>
+        </section>
+
+        <section class="heat-analysis">
+            <h2>事件热度</h2>
+            <div class="heat-container">
+                <div class="heat-item">
+                    <h3>微博热度趋势图</h3>
+                    <button onclick="showHeatTrend()" class="btn">查看微博热度趋势图</button>
+                    <div id="heat-trend-container" class="hidden">
+                        <img src="热度图1.png" alt="微博热度趋势图" class="analysis-image">
+                    </div>
+                </div>
+                <div class="heat-item">
+                    <h3>百度指数图</h3>
+                    <button onclick="showHeatDistribution()" class="btn">查看百度指数图</button>
+                    <div id="heat-distribution-container" class="hidden">
+                        <img src="热度图2.png" alt="百度指数图" class="analysis-image">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="media-views">
+            <h2>媒体观点</h2>
+            <div class="media-container">
+                <div class="media-item" onclick="showMediaContent('chinese-pingpong')">
+                    <div class="media-source">中国乒协</div>
+                    <div id="chinese-pingpong" class="hidden">
+                        <p class="media-content">理解和尊重运动员本人意愿，并将全力支持和保障他保持良好竞技水平，为乒乓球事业再创辉煌。</p>
+                    </div>
+                </div>
+                <div class="media-item" onclick="showMediaContent('german-embassy')">
+                    <div class="media-source">德国驻华大使馆</div>
+                    <div id="german-embassy" class="hidden">
+                        <p class="media-content">我们相信，樊振东的加盟不仅是竞技层面的里程碑，还会为整个德国乃至欧洲的乒乓球联赛带来新的光彩。</p>
+                    </div>
+                </div>
+                <div class="media-item" onclick="showMediaContent('red-star')">
+                    <div class="media-source">红星新闻</div>
+                    <div id="red-star" class="hidden">
+                        <p class="media-content">与其道德绑架，不如思考如何优化运动员成长生态。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="analysis">
+            <div class="analysis-item">
+                <h2>词云分析</h2>
+                <button onclick="showWordCloud()" class="btn">生成词云图</button>
+                <div id="wordcloud-container" class="hidden">
+                    <img src="词云图.png" alt="词云图" class="analysis-image">
+                </div>
+            </div>
+
+            <div class="analysis-item">
+                <h2>情感分析</h2>
+                <button onclick="showSentimentDistribution()" class="btn">查看情绪分布图</button>
+                <div id="sentiment-container" class="hidden">
+                    <img src="情绪分布图.png" alt="情感分布图" class="analysis-image">
+                    <div class="sentiment-buttons">
+                        <button onclick="showSentimentContent('positive')" class="sentiment-btn">
+                            <span class="sentiment-icon">😊</span> 正面观点
+                        </button>
+                        <button onclick="showSentimentContent('neutral')" class="sentiment-btn">
+                            <span class="sentiment-icon">😐</span> 中立观点
+                        </button>
+                        <button onclick="showSentimentContent('negative')" class="sentiment-btn">
+                            <span class="sentiment-icon">😔</span> 负面观点
+                        </button>
+                    </div>
+                    <div class="sentiment-examples">
+                        <div class="sentiment-section" id="positive-section">
+                            <ul id="positive-examples">
+                                <li>
+                                    <h4>职业发展的突破性选择</h4>
+                                    <p>球迷认为樊振东加盟德甲是"打破WTT垄断的破局之举"，既规避了强制参赛罚款压力，又能通过高水平联赛保持竞技状态。</p>
+                                </li>
+                                <li>
+                                    <h4>推动乒乓球国际化</h4>
+                                    <p>体育评论员王政解读樊振东加盟德甲联赛不仅仅是其个人职业发展的新突破，同时也是中国乒乓球国际化进程当中的重要一步。网友认为樊振东的加盟"激活了欧洲乒坛"，其商业价值带动俱乐部股价24小时涨超20%，球衣预售量激增，证明国际市场的认可。</p>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="sentiment-section" id="neutral-section">
+                            <ul id="neutral-examples">
+                                <li>
+                                    <h4>职业探索</h4>
+                                    <p>媒体强调此为"运动员权益的实践"，樊振东主动选择职业路径(自带教练团队、独立签约)，打破传统举国体制依赖。业内认为德甲经历可为其未来奥运备战积累经验，但需平衡国内外赛程，如2025年乒超联赛第三阶段与德甲时间冲突。</p>
+                                </li>
+                                <li>
+                                    <h4>对国内乒坛的警示作用</h4>
+                                    <p>部分网友指出该事件反映国内联赛整端:商业价值分配不公、饭圈文化干扰竞技精神，呼吁乒协改革。</p>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="sentiment-section" id="negative-section">
+                            <ul id="negative-examples">
+                                <li>
+                                    <h4>人才与资源外流争议</h4>
+                                    <p>部分网友认为国内培养的顶级选手为外国俱乐部效力，恐引发效仿潮，导致商业赞助转向国际市场。极少数极端言论指责樊振东"忘本""向钱看齐"，认为其背离"为国争光"使命。</p>
+                                </li>
+                                <li>
+                                    <h4>与国家队配合问题</h4>
+                                    <p>球迷担忧长期海外参赛可能导致"国家队战术配合生疏"，影响洛杉矶奥运会团体赛表现。质疑其"奥运后近一年不参加国际赛，却加盟外国俱乐部"的合理性。</p>
+                                </li>
+                                <li>
+                                    <h4>饭圈文化对运动员的伤害</h4>
+                                    <p>部分球迷认为国内"输球不行，赢球也不行"的环境是逼走顶尖选手的主因。</p>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="interaction">
+            <h2>互动讨论</h2>
+            <div class="comment-section">
+                <textarea id="comment-input" placeholder="你对这件事的看法，欢迎留言..."></textarea>
+                <button onclick="submitComment()" class="btn">发表评论</button>
+                <div id="comments-list">
+                    <!-- 评论将通过JavaScript动态加载 -->
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 
